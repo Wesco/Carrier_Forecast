@@ -6,6 +6,7 @@ Sub CreateOrderReport()
     Dim iDest As Long
     Dim iRows As Long
     Dim iCols As Long
+    Dim TotalRows As Long
 
     iDest = 16    'Column offset for vlookups
     iRows = Worksheets("Combined").UsedRange.Rows.Count
@@ -16,30 +17,31 @@ Sub CreateOrderReport()
             Destination:=Worksheets("Forecast").Range("A1")
 
     Worksheets("Forecast").Select
+    TotalRows = ActiveSheet.UsedRange.Rows.Count
 
     Range("B1").Value = "SIM"
-    Range("B2").Formula = "=IFERROR(IF(VLOOKUP(A2,Master!A:B,2,FALSE)=0,""-"",VLOOKUP(A2,Master!A:B,2,FALSE)),""-"")"
-    Range("B2").AutoFill Destination:=Range(Cells(2, 2), Cells(ActiveSheet.UsedRange.Rows.Count, 2))
+    Range("B2:B" & TotalRows).Formula = "=IFERROR(IF(VLOOKUP(A2,Master!A:B,2,FALSE)=0,""-"",VLOOKUP(A2,Master!A:B,2,FALSE)),""-"")"
+    Range("B2:B" & TotalRows).Value = Range("B2:B" & TotalRows).Value
 
     Range("C1").Value = "Description"
-    Range("C2").Formula = "=IFERROR(IF(VLOOKUP(A2,Master!A:D,4,FALSE)=0,"""",VLOOKUP(A2,Master!A:D,4,FALSE)),"""")"
-    Range("C2").AutoFill Destination:=Range(Cells(2, 3), Cells(ActiveSheet.UsedRange.Rows.Count, 3))
+    Range("C2:C" & TotalRows).Formula = "=IFERROR(IF(VLOOKUP(A2,Master!A:D,4,FALSE)=0,"""",VLOOKUP(A2,Master!A:D,4,FALSE)),"""")"
+    Range("C2:C" & TotalRows).Value = Range("C2:C" & TotalRows).Value
 
     Range("D1").Value = "On Hand"
-    Range("D2").Formula = "=IFERROR(VLOOKUP(B2,Gaps!D:F,3,FALSE),""-"")"
-    Range("D2").AutoFill Destination:=Range(Cells(2, 4), Cells(ActiveSheet.UsedRange.Rows.Count, 4))
-
+    Range("D2:D" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2,Gaps!D:F,3,FALSE),""-"")"
+    Range("D2:D" & TotalRows).Value = Range("D2:D" & TotalRows).Value
+    
     Range("E1").Value = "Reserve"
-    Range("E2").Formula = "=IFERROR(VLOOKUP(B2,Gaps!D:G,4,FALSE),""-"")"
-    Range("E2").AutoFill Destination:=Range(Cells(2, 5), Cells(ActiveSheet.UsedRange.Rows.Count, 5))
+    Range("E2:E" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2,Gaps!D:G,4,FALSE),""-"")"
+    Range("E2:E" & TotalRows).Value = Range("E2:E" & TotalRows).Value
 
     Range("F1").Value = "OO"
-    Range("F2").Formula = "=IFERROR(VLOOKUP(B2,Gaps!D:I,6,FALSE),""-"")"
-    Range("F2").AutoFill Destination:=Range(Cells(2, 6), Cells(ActiveSheet.UsedRange.Rows.Count, 6))
+    Range("F2:F" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2,Gaps!D:I,6,FALSE),""-"")"
+    Range("F2:F" & TotalRows).Value = Range("F2:F" & TotalRows).Value
 
     Range("G1").Value = "BO"
-    Range("G2").Formula = "=IFERROR(VLOOKUP(B2,Gaps!D:H,5,FALSE),""-"")"
-    Range("G2").AutoFill Destination:=Range(Cells(2, 7), Cells(ActiveSheet.UsedRange.Rows.Count, 7))
+    Range("G2:G" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2,Gaps!D:H,5,FALSE),""-"")"
+    Range("G2:G" & TotalRows).Value = Range("G2:G" & TotalRows).Value
 
     Range("H1").Value = "WDC"
     Range("H2").Formula = "=IFERROR(VLOOKUP(B2,Gaps!D:AJ,33,FALSE),""-"")"
@@ -148,14 +150,7 @@ Sub CreateOrderReport()
     End With
     Range(Cells(2, 4), Cells(ActiveSheet.UsedRange.Rows.Count, ActiveSheet.UsedRange.Columns.Count)).HorizontalAlignment = xlCenter
     Range(Cells(2, 2), Cells(ActiveSheet.UsedRange.Rows.Count, 2)).HorizontalAlignment = xlCenter
-    Cells.EntireColumn.AutoFit
-
-'    Columns("G:G").Insert
-'    Range("G1").Value = "Net Stock"
-'    Range("G2").Formula = "=SUM(D2,F2)"
-'    With Range(Cells(2, 7), Cells(ActiveSheet.UsedRange.Rows.Count, 7))
-'        .Value = .Value
-'    End With
+    ActiveSheet.UsedRange.Columns.AutoFit
     
     Columns("O:O").ColumnWidth = 22.29
     Application.ScreenUpdating = True
