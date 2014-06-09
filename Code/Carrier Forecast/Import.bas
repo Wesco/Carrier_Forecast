@@ -11,7 +11,7 @@ Sub ImportDemandForecast()
     sName = "Demand " & Format(Date, "m-dd-yy") & ".xlsx"
 
     If FileExists(sPath) <> True Then RecMkDir sPath
-    
+
     On Error GoTo OPEN_ERROR    'Displays 'No File Selected'
     Workbooks.Open FileName:=fPath
     On Error GoTo 0
@@ -73,9 +73,9 @@ Sub ImportWeeklyForecast()
     Application.DisplayAlerts = False
     fPath = Application.GetOpenFilename("Weekly Forecast (*.xlsx), *.xlsx", Title:="Select weekly forecast")
     sName = "Weekly " & Format(Date, "m-dd-yy") & ".xlsx"
-    
+
     If FileExists(sPath) <> True Then RecMkDir sPath
-    
+
     On Error GoTo OPEN_ERROR
     Workbooks.Open FileName:=fPath
     On Error GoTo 0
@@ -137,11 +137,11 @@ Sub ImportGaps()
     Dim sName As String    'Gaps Filename
     Dim i As Integer       'Counter
     Dim sPath As String
-    
+
     sPath = "\\BR3615GAPS\GAPS\3615 GAPS DOWNLOAD\" & Format(Date, "yyyy") & "\"
-    
+
     Worksheets("Gaps").Select
-    
+
     For i = 0 To 10
         sName = "3615 " & Format(Date - i, "yyyy-mm-dd") & ".xlsx"
         If FileExists(sPath & sName) Then
@@ -157,7 +157,7 @@ Sub ImportGaps()
     Else
         Err.Raise Number:=53, _
                   Description:="Gaps file not found." _
-                               & vbCrLf & vbCrLf & _
+                             & vbCrLf & vbCrLf & _
                                "Please make sure you are connected to the network " & _
                                "and that gaps has been run in the past 10 days"
     End If
@@ -178,6 +178,9 @@ Sub ImportMaster()
     Application.DisplayAlerts = False
     Application.AskToUpdateLinks = False
     Workbooks.Open FileName:=sPath
+    On Error Resume Next
+    Sheets("ACTIVE").Select
+    On Error GoTo 0
     ActiveSheet.AutoFilterMode = False
     Set Wkbk = ActiveWorkbook
     ActiveSheet.UsedRange.Copy
