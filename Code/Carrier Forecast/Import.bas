@@ -143,7 +143,7 @@ Sub ImportGaps()
     Worksheets("Gaps").Select
 
     For i = 0 To 10
-        sName = "3615 " & Format(Date - i, "yyyy-mm-dd") & ".xlsx"
+        sName = "3615 " & Format(Date - i, "yyyy-mm-dd") & ".csv"
         If FileExists(sPath & sName) Then
             fileFound = True
             Exit For
