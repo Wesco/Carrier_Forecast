@@ -43,14 +43,21 @@ Function Email(SendTo As String, Optional CC As String, Optional BCC As String, 
 End Function
 
 Sub CleanUp()
-    Dim aWorksheets As Variant
+    Dim s As Worksheet
 
-    For Each aWorksheets In ThisWorkbook.Sheets
-        If aWorksheets.Name <> "Master" And aWorksheets.Name <> "Macro" Then
-            RemoveFilter (aWorksheets.Name)
-            aWorksheets.Cells.Delete
+    ThisWorkbook.Activate
+    
+    For Each s In ThisWorkbook.Sheets
+        If s.Name <> "Master" And s.Name <> "Macro" Then
+            s.Select
+            s.AutoFilterMode = False
+            s.Cells.Delete
+            s.Range("A1").Select
         End If
     Next
+    
+    Sheets("Macro").Select
+    Range("C7").Select
 End Sub
 
 Sub Delete(sPath As String)

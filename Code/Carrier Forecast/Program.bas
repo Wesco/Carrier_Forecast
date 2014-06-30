@@ -5,7 +5,7 @@ Sub Main()
     Application.ScreenUpdating = False
     CleanUp
     ImportMaster
-    ImportGaps
+    ImportGaps Sheets("Gaps").Range("A1"), False
     ImportDemandForecast    'Unmodified copy is saved during import
     ImportWeeklyForecast    'Unmodified copy is saved during import
     CombineForecasts
