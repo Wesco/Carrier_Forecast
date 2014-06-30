@@ -46,7 +46,7 @@ Sub CleanUp()
     Dim s As Worksheet
 
     ThisWorkbook.Activate
-    
+
     For Each s In ThisWorkbook.Sheets
         If s.Name <> "Master" And s.Name <> "Macro" Then
             s.Select
@@ -55,7 +55,7 @@ Sub CleanUp()
             s.Range("A1").Select
         End If
     Next
-    
+
     Sheets("Macro").Select
     Range("C7").Select
 End Sub

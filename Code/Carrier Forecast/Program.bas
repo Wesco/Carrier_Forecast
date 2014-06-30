@@ -22,5 +22,3 @@ Sub Main()
           Subject:="Carrier Forecast", _
           Body:="""\\br3615gaps\gaps\Carrier\" & Format(Date, "yyyy") & " Alerts\Slink Alert " & Format(Date, "M-dd-yy") & ".xlsx"""
 End Sub
-
-

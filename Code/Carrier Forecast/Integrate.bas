@@ -20,13 +20,13 @@ Sub CombineForecasts()
     weeklyCols = ActiveSheet.UsedRange.Columns.Count
     vCell = CInt(Format(Cells(1, weeklyCols).Value, "mmdd"))
     Set rTemp = Range(Cells(1, 2), Cells(1, weeklyCols))
-    
+
     Worksheets("Demand").Select
 
     Do While vCell <> Format(Range("B1").Text, "mdd")
         Columns(2).Delete Shift:=xlToLeft
     Loop
-    
+
     If vCell = Format(Range("B1").Text, "mdd") Then
         Columns(2).Delete Shift:=xlToLeft
     End If
@@ -80,6 +80,3 @@ Sub MergeParts()
     Next
     Range(Cells(1, 2), Cells(1, ActiveSheet.Columns.Count)).NumberFormat = "mm/dd"
 End Sub
-
-
-

@@ -30,7 +30,7 @@ Sub CreateOrderReport()
     Range("D1").Value = "On Hand"
     Range("D2:D" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2,Gaps!D:F,3,FALSE),""-"")"
     Range("D2:D" & TotalRows).Value = Range("D2:D" & TotalRows).Value
-    
+
     Range("E1").Value = "Reserve"
     Range("E2:E" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2,Gaps!D:G,4,FALSE),""-"")"
     Range("E2:E" & TotalRows).Value = Range("E2:E" & TotalRows).Value
@@ -151,7 +151,7 @@ Sub CreateOrderReport()
     Range(Cells(2, 4), Cells(ActiveSheet.UsedRange.Rows.Count, ActiveSheet.UsedRange.Columns.Count)).HorizontalAlignment = xlCenter
     Range(Cells(2, 2), Cells(ActiveSheet.UsedRange.Rows.Count, 2)).HorizontalAlignment = xlCenter
     ActiveSheet.UsedRange.Columns.AutoFit
-    
+
     Columns("O:O").ColumnWidth = 22.29
     Application.ScreenUpdating = True
 End Sub
@@ -202,5 +202,3 @@ Sub AddNotes()
         End If
     Next
 End Sub
-
-
