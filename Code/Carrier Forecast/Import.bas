@@ -132,41 +132,89 @@ OPEN_ERROR:
     Exit Sub
 End Sub
 
-Sub ImportGaps()
-    Dim fileFound As Boolean
-    Dim sName As String    'Gaps Filename
-    Dim i As Integer       'Counter
-    Dim sPath As String
+'---------------------------------------------------------------------------------------
+' Proc  : Sub ImportGaps
+' Date  : 12/12/2012
+' Desc  : Imports gaps to the workbook containing this macro.
+' Ex    : ImportGaps
+'---------------------------------------------------------------------------------------
+Sub ImportGaps(Optional Destination As Range, Optional SimsAsText As Boolean = True)
+    Dim Path As String      'Gaps file path
+    Dim Name As String      'Gaps Sheet Name
+    Dim i As Long           'Counter to decrement the date
+    Dim dt As Date          'Date for gaps file name and path
+    Dim TotalRows As Long   'Total number of rows
+    Dim Result As VbMsgBoxResult    'Yes/No to proceed with old gaps file if current one isn't found
 
-    sPath = "\\BR3615GAPS\GAPS\3615 GAPS DOWNLOAD\" & Format(Date, "yyyy") & "\"
 
-    Worksheets("Gaps").Select
+    'This error is bypassed so you can determine whether or not the sheet exists
+    On Error GoTo CREATE_GAPS
+    If TypeName(Destination) = "Nothing" Then
+        Set Destination = ThisWorkbook.Sheets("Gaps").Range("A1")
+    End If
+    On Error GoTo 0
 
-    For i = 0 To 10
-        sName = "3615 " & Format(Date - i, "yyyy-mm-dd") & ".csv"
-        If FileExists(sPath & sName) Then
-            fileFound = True
+    Application.DisplayAlerts = False
+
+    'Try to find Gaps
+    For i = 0 To 15
+        dt = Date - i
+        Path = "\\br3615gaps\gaps\3615 Gaps Download\" & Format(dt, "yyyy") & "\"
+        Name = "3615 " & Format(dt, "yyyy-mm-dd") & ".csv"
+        If Exists(Path & Name) Then
             Exit For
         End If
     Next
 
-    If fileFound = True Then
-        Workbooks.Open (sPath & sName)
-        ActiveSheet.UsedRange.Copy Destination:=ThisWorkbook.Worksheets("Gaps").Range("A1")
-        ActiveWorkbook.Close
+    'Make sure Gaps file was found
+    If Exists(Path & Name) Then
+        If dt <> Date Then
+            Result = MsgBox( _
+                     Prompt:="Gaps from " & Format(dt, "mmm dd, yyyy") & " was found." & vbCrLf & "Would you like to continue?", _
+                     Buttons:=vbYesNo, _
+                     Title:="Gaps not up to date")
+        End If
+
+        If Result <> vbNo Then
+            ThisWorkbook.Activate
+            Sheets(Destination.Parent.Name).Select
+            
+            'If there is data on the destination sheet delete it
+            If Range("A1").Value <> "" Then
+                Cells.Delete
+            End If
+
+            Workbooks.Open Path & Name
+            ActiveSheet.UsedRange.Copy Destination:=Destination
+            ActiveWorkbook.Close
+
+            TotalRows = ActiveSheet.UsedRange.Rows.Count
+            Range("D1").Value = "SIM"
+            Range("D1:D" & TotalRows).ClearContents
+
+            'SIMs are 11 digits and can have leading 0's
+            If SimsAsText = True Then
+                Range("D2:D" & TotalRows).Formula = "=""=""&""""""""&RIGHT(""000000"" & B2, 6)&RIGHT(""00000"" & C2, 5)&"""""""""
+            Else
+                Range("D2:D" & TotalRows).Formula = "=B2&RIGHT(""00000"" & C2, 5)"
+            End If
+
+            Range("D2:D" & TotalRows).Value = Range("D2:D" & TotalRows).Value
+        Else
+            Err.Raise 18, "ImportGaps", "Import canceled"
+        End If
     Else
-        Err.Raise Number:=53, _
-                  Description:="Gaps file not found." _
-                             & vbCrLf & vbCrLf & _
-                               "Please make sure you are connected to the network " & _
-                               "and that gaps has been run in the past 10 days"
+        Err.Raise 53, "ImportGaps", "Gaps could not be found."
     End If
-    Columns("D:D").ClearContents
-    Range("D1").Value = "SIM"
-    Range("D2").Formula = "=B2&C2"
-    Range("D2").AutoFill Destination:=Range(Cells(2, 4), Cells(ActiveSheet.UsedRange.Rows.Count, 4))
-    Range("D:D").Value = Range("D:D").Value
-    Range("D:D").EntireColumn.AutoFit
+
+    Application.DisplayAlerts = True
+    Exit Sub
+
+CREATE_GAPS:
+    ThisWorkbook.Sheets.Add After:=Sheets(ThisWorkbook.Sheets.Count)
+    ActiveSheet.Name = "Gaps"
+    Resume
+
 End Sub
 
 Sub ImportMaster()
