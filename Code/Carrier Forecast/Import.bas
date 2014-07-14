@@ -184,10 +184,7 @@ Sub ImportGaps(Optional Destination As Range, Optional SimsAsText As Boolean = T
                 Cells.Delete
             End If
 
-            Workbooks.Open Path & Name
-            ActiveSheet.UsedRange.Copy Destination:=Destination
-            ActiveWorkbook.Close
-
+            ImportCsvAsText Path, Name, Sheets("Gaps").Range("A1")
             TotalRows = ActiveSheet.UsedRange.Rows.Count
             Range("D1:D" & TotalRows).ClearContents
             Range("D1").Value = "SIM"
