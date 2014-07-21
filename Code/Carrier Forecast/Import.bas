@@ -1,6 +1,26 @@
 Attribute VB_Name = "Import"
 Option Explicit
 
+Sub ImportForecast(FileFilter As String, Title As String, Destination As Range)
+    Dim PrevDispAlerts As Boolean
+    Dim FcstFile As String
+    
+    PrevDispAlerts = Application.DisplayAlerts
+    FcstFile = Application.GetOpenFilename(FileFilter:=FileFilter, Title:=Title)
+
+    If FcstFile <> "False" Then
+        Workbooks.Open FcstFile
+        ActiveSheet.UsedRange.Copy Destination:=Destination
+        
+        Application.DisplayAlerts = False
+        ActiveWorkbook.Saved = True
+        ActiveWorkbook.Close
+        Application.DisplayAlerts = PrevDispAlerts
+    Else
+        Err.Raise Errors.USER_INTERRUPT, "ImportForecast", "User aborted import"
+    End If
+End Sub
+
 Sub ImportDemandForecast()
     Dim fPath As String    'Stores the demand forecast file location
     Dim sName As String    'New name for unmodified forecast
@@ -133,28 +153,43 @@ OPEN_ERROR:
 End Sub
 
 Sub ImportMaster()
-    Dim sPath As String
+    Dim PrevDispAlerts As Boolean
+    Dim PrevUpdateLnks As Boolean
+    Dim File As String
+    Dim Path As String
     Dim Wkbk As Workbook
 
-    sPath = "\\br3615gaps\gaps\Billy Mac-Master Lists\Carrier Master List " & Format(Date, "yyyy") & ".xls"
-    ThisWorkbook.Sheets("Master").Cells.Delete
+    PrevDispAlerts = Application.DisplayAlerts
+    PrevUpdateLnks = Application.AskToUpdateLinks
     Application.DisplayAlerts = False
     Application.AskToUpdateLinks = False
-    Workbooks.Open FileName:=sPath
-    On Error Resume Next
-    Sheets("ACTIVE").Select
-    On Error GoTo 0
-    ActiveSheet.AutoFilterMode = False
-    Set Wkbk = ActiveWorkbook
-    ActiveSheet.UsedRange.Copy
-    ThisWorkbook.Activate
-    Sheets("Master").Range("A1").PasteSpecial Paste:=xlPasteValues, _
-                                              Operation:=xlNone, _
-                                              SkipBlanks:=False, _
-                                              Transpose:=False
-    Application.CutCopyMode = False
-    Wkbk.Close
-    Application.DisplayAlerts = True
-    Application.AskToUpdateLinks = True
-    Sheets("Macro").Select
+    Path = "\\br3615gaps\gaps\Billy Mac-Master Lists\"
+    File = "Carrier Master List " & Format(Date, "yyyy") & ".xls"
+    
+    If FileExists(Path & File) Then
+        Workbooks.Open Path & File
+        
+        Sheets("ACTIVE").Select
+        ActiveSheet.AutoFilterMode = False
+        ActiveSheet.Columns.Hidden = False
+        ActiveSheet.Rows.Hidden = False
+        
+        Set Wkbk = ActiveWorkbook
+        ActiveSheet.UsedRange.Copy
+        
+        ThisWorkbook.Activate
+        Sheets("Master").Range("A1").PasteSpecial Paste:=xlPasteValues, _
+                                                  Operation:=xlNone, _
+                                                  SkipBlanks:=False, _
+                                                  Transpose:=False
+        Application.CutCopyMode = False
+        
+        Wkbk.Saved = True
+        Wkbk.Close
+        
+        Application.DisplayAlerts = PrevDispAlerts
+        Application.AskToUpdateLinks = PrevUpdateLnks
+    Else
+        Err.Raise Errors.FILE_NOT_FOUND, "ImportMaster", File & " not found."
+    End If
 End Sub

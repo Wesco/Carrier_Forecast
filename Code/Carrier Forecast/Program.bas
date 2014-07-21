@@ -4,10 +4,13 @@ Option Explicit
 Sub Main()
     Application.ScreenUpdating = False
 
+    On Error GoTo IMPORT_ERR
     ImportMaster
     ImportGaps SimsAsText:=False
-    ImportDemandForecast    'Unmodified copy is saved during import
-    ImportWeeklyForecast    'Unmodified copy is saved during import
+    ImportForecast "Demand (*.xlsx), *.xlsx", "Demand", Sheets("Demand").Range("A1")
+    ImportForecast "Weekly (*.xlsx), *.xlsx", "Weekly", Sheets("Weekly").Range("A1")
+    On Error GoTo 0
+
     CombineForecasts
     MergeParts
     ExportCombined
@@ -22,6 +25,11 @@ Sub Main()
           CC:="ACoffey@wesco.com", _
           Subject:="Carrier Forecast", _
           Body:="""\\br3615gaps\gaps\Carrier\" & Format(Date, "yyyy") & " Alerts\Slink Alert " & Format(Date, "M-dd-yy") & ".xlsx"""
+    Exit Sub
+
+IMPORT_ERR:
+    MsgBox Prompt:="Error " & Err.Number & " (" & Err.Description & ") occurred in " & Err.Source & ".", _
+           Title:="Oops!"
 End Sub
 
 Sub Clean()
