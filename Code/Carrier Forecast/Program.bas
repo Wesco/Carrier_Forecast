@@ -3,7 +3,7 @@ Option Explicit
 
 Sub Main()
     Application.ScreenUpdating = False
-    
+
     ImportMaster
     ImportGaps Sheets("Gaps").Range("A1"), False
     ImportDemandForecast    'Unmodified copy is saved during import
@@ -14,7 +14,7 @@ Sub Main()
     CreateOrderReport
     AddNotes
     ExportForecast
-    
+
     Application.ScreenUpdating = True
     ThisWorkbook.Saved = True
     MsgBox ("Complete!")
@@ -22,4 +22,29 @@ Sub Main()
           CC:="ACoffey@wesco.com", _
           Subject:="Carrier Forecast", _
           Body:="""\\br3615gaps\gaps\Carrier\" & Format(Date, "yyyy") & " Alerts\Slink Alert " & Format(Date, "M-dd-yy") & ".xlsx"""
+End Sub
+
+Sub Clean()
+    Dim PrevDispAlerts As Boolean
+    Dim s As Worksheet
+
+    PrevDispAlerts = Application.DisplayAlerts
+    Application.DisplayAlerts = False
+
+    ThisWorkbook.Activate
+    For Each s In ThisWorkbook.Sheets
+        If s.Name <> "Macro" Then
+            s.Select
+            s.AutoFilterMode = False
+            s.Columns.Hidden = False
+            s.Rows.Hidden = False
+            s.Cells.Delete
+            s.Range("A1").Select
+        End If
+    Next
+
+    Sheets("Macro").Select
+    Range("C7").Select
+
+    Application.DisplayAlerts = PrevDispAlerts
 End Sub
