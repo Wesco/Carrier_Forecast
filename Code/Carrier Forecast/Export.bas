@@ -1,6 +1,19 @@
 Attribute VB_Name = "Export"
 Option Explicit
 
+Sub ExportSlink(SourceSheet As Worksheet)
+    Dim Path As String
+    Dim Name As String
+    
+    Path = "\\br3615gaps\gaps\Carrier\Slink " & Format(Date, "yyyy") & "\"
+    Name = SourceSheet.Name & Format(Date, "yyyy-mm-dd")
+    
+    SourceSheet.Copy
+    ActiveSheet.Name = Name
+    ActiveWorkbook.SaveAs Path & Name & ".xlsx", xlOpenXMLWorkbook
+    ActiveWorkbook.Close
+End Sub
+
 Sub ExportCombined()
     Dim sPath As String
     sPath = "\\br3615gaps\gaps\Carrier\" & Format(Date, "yyyy") & " Slink\"

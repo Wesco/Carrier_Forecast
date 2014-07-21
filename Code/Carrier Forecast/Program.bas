@@ -4,12 +4,14 @@ Option Explicit
 Sub Main()
     Application.ScreenUpdating = False
 
-    On Error GoTo IMPORT_ERR
+    On Error GoTo MAIN_ERR
     ImportMaster
     ImportGaps SimsAsText:=False
     ImportForecast "Demand (*.xlsx), *.xlsx", "Demand", Sheets("Demand").Range("A1")
     ImportForecast "Weekly (*.xlsx), *.xlsx", "Weekly", Sheets("Weekly").Range("A1")
-    On Error GoTo 0
+
+    ExportSlink Sheets("Demand")
+    ExportSlink Sheets("Weekly")
 
     CombineForecasts
     MergeParts
@@ -17,6 +19,7 @@ Sub Main()
     CreateOrderReport
     AddNotes
     ExportForecast
+    On Error GoTo 0
 
     Application.ScreenUpdating = True
     ThisWorkbook.Saved = True
@@ -27,7 +30,7 @@ Sub Main()
           Body:="""\\br3615gaps\gaps\Carrier\" & Format(Date, "yyyy") & " Alerts\Slink Alert " & Format(Date, "M-dd-yy") & ".xlsx"""
     Exit Sub
 
-IMPORT_ERR:
+MAIN_ERR:
     MsgBox Prompt:="Error " & Err.Number & " (" & Err.Description & ") occurred in " & Err.Source & ".", _
            Title:="Oops!"
 End Sub
