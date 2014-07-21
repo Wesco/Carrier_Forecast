@@ -5,7 +5,7 @@ Sub Main()
     Application.ScreenUpdating = False
 
     ImportMaster
-    ImportGaps Sheets("Gaps").Range("A1"), False
+    ImportGaps SimsAsText:=False
     ImportDemandForecast    'Unmodified copy is saved during import
     ImportWeeklyForecast    'Unmodified copy is saved during import
     CombineForecasts
