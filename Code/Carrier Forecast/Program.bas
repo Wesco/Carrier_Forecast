@@ -3,7 +3,7 @@ Option Explicit
 
 Sub Main()
     Application.ScreenUpdating = False
-    CleanUp
+    
     ImportMaster
     ImportGaps Sheets("Gaps").Range("A1"), False
     ImportDemandForecast    'Unmodified copy is saved during import
@@ -14,6 +14,7 @@ Sub Main()
     CreateOrderReport
     AddNotes
     ExportForecast
+    
     Application.ScreenUpdating = True
     ThisWorkbook.Saved = True
     MsgBox ("Complete!")
