@@ -13,6 +13,9 @@ Sub Main()
     ExportSlink Sheets("Demand")
     ExportSlink Sheets("Weekly")
 
+    FormatFcst Sheets("Demand")
+    FormatFcst Sheets("Weekly")
+    
     CombineForecasts
     MergeParts
     ExportCombined
