@@ -1,6 +1,11 @@
 Attribute VB_Name = "Program"
 Option Explicit
 
+Enum Fcst
+    Demand
+    Weekly
+End Enum
+
 Sub Main()
     Application.ScreenUpdating = False
 
@@ -13,12 +18,13 @@ Sub Main()
     ExportSlink Sheets("Demand")
     ExportSlink Sheets("Weekly")
 
-    FormatFcst Sheets("Demand")
-    FormatFcst Sheets("Weekly")
+    FormatFcst Fcst.Demand
+    FormatFcst Fcst.Weekly
     
     CombineForecasts
     MergeParts
-    ExportCombined
+    ExportSlink Sheets("Combined")
+    
     CreateOrderReport
     AddNotes
     ExportForecast

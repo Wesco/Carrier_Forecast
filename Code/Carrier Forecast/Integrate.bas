@@ -2,74 +2,77 @@ Attribute VB_Name = "Integrate"
 Option Explicit
 
 Sub CombineForecasts()
-    Dim rTemp As Range
-    Dim vCell As Integer
     Dim i As Integer
-    Dim demandRows As Long
-    Dim weeklyRows As Long
-    Dim weeklyCols As Long
+    Dim DemandRows As Long
+    Dim DemandCols As Integer
+    Dim ColHeaders As Variant
+    Dim WeeklyEndDt As Date
+    Dim WeeklyRows As Long
+    Dim WeeklyCols As Integer
 
-    demandRows = Worksheets("Demand").UsedRange.Rows.Count
-    weeklyRows = Worksheets("Weekly").UsedRange.Rows.Count
 
-    Worksheets("Weekly").Select
-    Do While CInt(Format(Range("B1").Value, "m")) < CInt(Format(Date, "m"))
+    Sheets("Weekly").Select
+
+    'Remove dates from the weekly forecast if they have already passed
+    Do While CDate(Range("B1").Value) < Date
         Columns(2).Delete Shift:=xlToLeft
     Loop
 
-    weeklyCols = ActiveSheet.UsedRange.Columns.Count
-    vCell = CInt(Format(Cells(1, weeklyCols).Value, "mmdd"))
-    Set rTemp = Range(Cells(1, 2), Cells(1, weeklyCols))
+    WeeklyRows = ActiveSheet.UsedRange.Rows.Count
+    WeeklyCols = ActiveSheet.UsedRange.Columns.Count
+    WeeklyEndDt = Cells(1, WeeklyCols).Value
+    ColHeaders = Range(Cells(1, 2), Cells(1, WeeklyCols)).Value
 
-    Worksheets("Demand").Select
+    Sheets("Demand").Select
+    DemandCols = ActiveSheet.UsedRange.Columns.Count
+    DemandRows = ActiveSheet.UsedRange.Rows.Count
 
-    Do While vCell <> Format(Range("B1").Text, "mdd")
-        Columns(2).Delete Shift:=xlToLeft
-    Loop
-
-    If vCell = Format(Range("B1").Text, "mdd") Then
-        Columns(2).Delete Shift:=xlToLeft
-    End If
-
-    Worksheets("Demand").Range(Cells(1, 2), Cells(1, weeklyCols)).EntireColumn.Insert Shift:=xlToRight
-    For i = 1 To weeklyCols - 1
-        Worksheets("Demand").Cells(1, i + 1) = rTemp(i)
+    'Remove intersection of weekly / demand columns
+    For i = 2 To DemandCols
+        If CDate(Range("B1").Value) <= WeeklyEndDt Then
+            Columns(2).Delete
+        Else
+            Exit For
+        End If
     Next
 
-    Worksheets("Demand").Range(Cells(1, 2), Cells(1, i)).NumberFormat = "mm/dd"
-    Worksheets("Weekly").Select
-    Range(Cells(2, 1), Cells(weeklyRows, weeklyCols)).Copy Destination:=Worksheets("Demand").Cells(demandRows + 1, 1)
-    Worksheets("Demand").Select
+    'Insert columns for weekly data
+    Range(Cells(1, 2), Cells(1, WeeklyCols)).EntireColumn.Insert
+    Range(Cells(1, 2), Cells(1, WeeklyCols)).Value = ColHeaders
+    Range(Cells(1, 2), Cells(1, WeeklyCols)).NumberFormat = "d-mmm"
+    
+    'Copy weekly data below demand data
+    Sheets("Weekly").Select
+    Range(Cells(2, 1), Cells(WeeklyRows, WeeklyCols)).Copy Destination:=Sheets("Demand").Range("A" & DemandRows + 1)
+    
+    'Set all blanks to 0's
+    Sheets("Demand").Select
     ActiveSheet.UsedRange.SpecialCells(xlCellTypeBlanks).Value = 0
-
 End Sub
 
 Sub MergeParts()
     Dim i As Integer
-    Dim rPivDest As Range
-    Dim rPivSource As Range
-    Const sPivName As String = "PivotTable1"
+    Dim PivDest As Range
+    Dim PivSource As Range
+    Dim PivName As String
 
-    Worksheets("Combined").Select
-    Set rPivDest = Worksheets("Combined").Range("A1")
+    PivName = "PivotTable1"
+    Set PivDest = Sheets("Combined").Range("A1")
+    Set PivSource = Sheets("Demand").UsedRange
 
-    Worksheets("Demand").Select
-    Set rPivSource = Worksheets("Demand").UsedRange
-
-    ActiveWorkbook.PivotCaches.Create(xlDatabase, rPivSource).CreatePivotTable rPivDest, sPivName
-    Worksheets("Combined").Select
-
-    With Worksheets("Combined").PivotTables(sPivName)
-        .PivotFields(rPivSource(1, 1).Text).Orientation = xlRowField
-        .PivotFields(rPivSource(1, 1).Text).Position = 1
-        For i = 2 To rPivSource.Columns.Count
-            .AddDataField .PivotFields(rPivSource(1, i).Text), "Sum of " & rPivSource(1, i).Text, xlSum
+    ActiveWorkbook.PivotCaches.Create(xlDatabase, PivSource).CreatePivotTable PivDest, PivName
+    
+    Sheets("Combined").Select
+    With ActiveSheet.PivotTables(PivName)
+        .PivotFields(PivSource(1, 1).Text).Orientation = xlRowField
+        .PivotFields(PivSource(1, 1).Text).Position = 1
+        For i = 2 To PivSource.Columns.Count
+            .AddDataField .PivotFields(PivSource(1, i).Text), "Sum of " & PivSource(1, i).Text, xlSum
         Next
     End With
 
-    Cells.Select
-    Selection.Copy
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+    Cells.Copy
+    Range("A1").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
     Application.CutCopyMode = False
 
     Rows("1:1").Delete Shift:=xlUp

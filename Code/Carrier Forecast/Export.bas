@@ -2,36 +2,22 @@ Attribute VB_Name = "Export"
 Option Explicit
 
 Sub ExportSlink(SourceSheet As Worksheet)
+    Dim PrevDispAlert As Boolean
     Dim Path As String
     Dim Name As String
 
-    Path = "\\br3615gaps\gaps\Carrier\Slink " & Format(Date, "yyyy") & "\"
+    PrevDispAlert = Application.DisplayAlerts
+    Path = "\\br3615gaps\gaps\Carrier\" & Format(Date, "yyyy") & "Slink\"
     Name = SourceSheet.Name & " " & Format(Date, "yyyy-mm-dd")
 
     SourceSheet.Copy
     ActiveSheet.Name = Name
-    ActiveWorkbook.SaveAs Path & Name & ".xlsx", xlOpenXMLWorkbook
-    ActiveWorkbook.Close
-End Sub
-
-Sub ExportCombined()
-    Dim sPath As String
-    sPath = "\\br3615gaps\gaps\Carrier\" & Format(Date, "yyyy") & " Slink\"
-
-    If FileExists(sPath) = False Then RecMkDir sPath
-    Worksheets("Combined").Copy
-    Worksheets.Add After:=Sheets(Sheets.Count), Count:=2
-    Sheets("Sheet3").Name = "Expedite"
-    Sheets("Sheet2").Name = "Order"
-    Worksheets("Combined").Select
-
-    On Error Resume Next
-    ActiveWorkbook.SaveAs sPath & "Combined " & Format(Date, "m-dd-yy") & ".xlsx", xlOpenXMLWorkbook
-    On Error GoTo 0
+    If Not FolderExists(Path) Then RecMkDir (Path)
 
     Application.DisplayAlerts = False
+    ActiveWorkbook.SaveAs Path & Name & ".xlsx", xlOpenXMLWorkbook
+    Application.DisplayAlerts = PrevDispAlert
     ActiveWorkbook.Close
-    Application.DisplayAlerts = True
 End Sub
 
 Sub ExportForecast()
