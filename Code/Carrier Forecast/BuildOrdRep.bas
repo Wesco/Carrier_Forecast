@@ -13,60 +13,40 @@ Sub CreateOrderReport()
     Range("A1:A" & TotalRows).Copy Destination:=Sheets("Forecast").Range("A1")
 
     Sheets("Forecast").Select
+    TotalRows = ActiveSheet.UsedRange.Rows.Count
 
-    Range("B1").Value = "SIM"
-    Range("B2:B" & TotalRows).Formula = "=IFERROR(IF(VLOOKUP(A2,Master!A:B,2,FALSE)=0,"""",VLOOKUP(A2,Master!A:B,2,FALSE)),"""")"
-    Range("B2:B" & TotalRows).Value = Range("B2:B" & TotalRows).Value
+    'Set column headers
+    Range("B1:O1").Value = Array("SIM", _
+                                 "Description", _
+                                 "On Hand", _
+                                 "Reserve", _
+                                 "OO", _
+                                 "BO", _
+                                 "WDC", _
+                                 "Last Cost", _
+                                 "UOM", _
+                                 "Min/Mult", _
+                                 "Supplier", _
+                                 "LT/Days", _
+                                 "LT/Weeks", _
+                                 "Stock Visualization")
 
-    Range("C1").Value = "Description"
-    Range("C2:C" & TotalRows).Formula = "=IFERROR(IF(VLOOKUP(A2,Master!A:D,4,FALSE)=0,"""",VLOOKUP(A2,Master!A:D,4,FALSE)),"""")"
-    Range("C2:C" & TotalRows).Value = Range("C2:C" & TotalRows).Value
+    'Add column data
+    Range("B2:N" & TotalRows).Formula = Array("=IFERROR(IF(VLOOKUP(A2,Master!A:B,2,FALSE)=0,"""",VLOOKUP(A2,Master!A:B,2,FALSE)),"""")", _
+                                              "=IFERROR(IF(VLOOKUP(A2,Master!A:D,4,FALSE)=0,"""",VLOOKUP(A2,Master!A:D,4,FALSE)),"""")", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:G,7,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:H,8,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:J,10,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:I,9,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AK,37,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AF,32,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AJ,36,FALSE),"""")", _
+                                              "=IFERROR(VLOOKUP(A2,Master!A:N,14,FALSE),"""")", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AM,39,FALSE),"""")", _
+                                              "=IFERROR(VLOOKUP(A2,Master!A:O,15,FALSE),0)", _
+                                              "=IFERROR(ROUNDUP(M2/7,0),0)")
 
-    Range("D1").Value = "On Hand"
-    Range("D2:D" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2,Gaps!A:G,7,FALSE),0)"
-    Range("D2:D" & TotalRows).Value = Range("D2:D" & TotalRows).Value
-
-    Range("E1").Value = "Reserve"
-    Range("E2:E" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2,Gaps!A:H,8,FALSE),0)"
-    Range("E2:E" & TotalRows).Value = Range("E2:E" & TotalRows).Value
-
-    Range("F1").Value = "OO"
-    Range("F2:F" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2,Gaps!A:J,10,FALSE),0)"
-    Range("F2:F" & TotalRows).Value = Range("F2:F" & TotalRows).Value
-
-    Range("G1").Value = "BO"
-    Range("G2:G" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2,Gaps!A:I,9,FALSE),0)"
-    Range("G2:G" & TotalRows).Value = Range("G2:G" & TotalRows).Value
-
-    Range("H1").Value = "WDC"
-    Range("H2:H" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2,Gaps!A:AK,37,FALSE),0)"
-    Range("H2:H" & TotalRows).Value = Range("H2:H" & TotalRows).Value
-
-    Range("I1").Value = "Last Cost"
-    Range("I2:I" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2,Gaps!A:AF,32,FALSE),0)"
-    Range("I2:I" & TotalRows).Value = Range("I2:I" & TotalRows).Value
-
-    Range("J1").Value = "UOM"
-    Range("J2:J" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2,Gaps!A:AJ,36,FALSE),"""")"
-    Range("J2:J" & TotalRows).Value = Range("J2:J" & TotalRows).Value
-
-    Range("K1").Value = "Min/Mult"
-    Range("K2:K" & TotalRows).Formula = "=IFERROR(VLOOKUP(A2,Master!A:N,14,FALSE),"""")"
-    Range("K2:K" & TotalRows).Value = Range("K2:K" & TotalRows).Value
-
-    Range("L1").Value = "Supplier"
-    Range("L2:L" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2,Gaps!A:AM,39,FALSE),"""")"
-    Range("L2:L" & TotalRows).Value = Range("L2:L" & TotalRows).Value
-
-    Range("M1").Value = "LT/Days"
-    Range("M2:M" & TotalRows).Formula = "=IFERROR(VLOOKUP(A2,Master!A:O,15,FALSE),0)"
-    Range("M2:M" & TotalRows).Value = Range("M2:M" & TotalRows).Value
-
-    Range("N1").Value = "LT/Weeks"
-    Range("N2:N" & TotalRows).Formula = "=IFERROR(ROUNDUP(M2/7,0),0)"
-    Range("N2:N" & TotalRows).Value = Range("N2:N" & TotalRows).Value
-
-    Range("O1").Value = "Stock Visualization"
+    ActiveSheet.UsedRange.Value = ActiveSheet.UsedRange.Value
 
     'Add forecast month data
     Range("P1:AL1").Formula = "=Combined!B1"
@@ -75,64 +55,65 @@ Sub CreateOrderReport()
     Range("P2:P" & TotalRows).Formula = "=D2-VLOOKUP(A2,Combined!A:B,2,FALSE)"
     Range("P2:P" & TotalRows).Value = Range("P2:P" & TotalRows).Value
 
-    CombinedCols = Sheets("Combined").UsedRange.Columns.Count
+    Sheets("Combined").Select
+    CombinedCols = ActiveSheet.UsedRange.Columns.Count
 
+    Sheets("Forecast").Select
+    'Set column data
     For i = 3 To 24
-        'Set column data
         Range(Cells(2, i + 14), Cells(TotalRows, i + 14)).Formula = "=IFERROR(" & Cells(2, i + 14 - 1).Address(False, False) & "-VLOOKUP(A2,Combined!A:X," & i & ",FALSE),0)"
         Range(Cells(2, i + 14), Cells(TotalRows, i + 14)).Value = Range(Cells(2, i + 14), Cells(TotalRows, i + 14)).Value
     Next
 
-    TotalCols = Columns(Columns.Count).End(xlToLeft).Column + 1
-    Cells(1, TotalCols).Value = "Notes"
-    Range(Cells(2, TotalCols), Cells(TotalRows, TotalCols)).Formula = "=IFERROR(IF(VLOOKUP(A2,Master!A:E,5,FALSE)=0,"""",VLOOKUP(A2,Master!A:E,5,FALSE)),"""")"
-    Range(Cells(2, TotalCols), Cells(TotalRows, TotalCols)).Value = Range(Cells(2, TotalCols), Cells(TotalRows, TotalCols)).Value
+    'Add notes from master
+    Range("AM1").Value = "Notes"
+    Range("AM2:AM" & TotalRows).Formula = "=IFERROR(IF(VLOOKUP(A2,Master!A:E,5,FALSE)=0,"""",VLOOKUP(A2,Master!A:E,5,FALSE)),"""")"
+    Range("AM2:AM" & TotalRows).Value = Range("AM2:AM" & TotalRows).Value
 
-    Range("O2:O" & TotalRows).SparklineGroups.Add Type:=xlSparkColumn, SourceData:=Range(Cells(2, 16), Cells(TotalRows, TotalCols - 1)).Address(False, False)
-    With Range("O2:O" & TotalRows).SparklineGroups.Item(1)
-        .Points.Negative.Visible = True
-        .SeriesColor.Color = 3289650
-        .SeriesColor.TintAndShade = 0
-        .Points.Negative.Color.Color = 208
-        .Points.Negative.Color.TintAndShade = 0
-        .Points.Markers.Color.Color = 208
-        .Points.Markers.Color.TintAndShade = 0
-        .Points.Highpoint.Color.Color = 208
-        .Points.Highpoint.Color.TintAndShade = 0
-        .Points.Lowpoint.Color.Color = 208
-        .Points.Lowpoint.Color.TintAndShade = 0
-        .Points.Firstpoint.Color.Color = 208
-        .Points.Firstpoint.Color.TintAndShade = 0
-        .Points.Lastpoint.Color.Color = 208
-        .Points.Lastpoint.Color.TintAndShade = 0
+    'Add sparklines
+    With Range("O2:O" & TotalRows).SparklineGroups
+        .Add Type:=xlSparkColumn, SourceData:=Range("P2:AL" & TotalRows).Address(False, False)
+        With .Item(1)
+            .Points.Negative.Visible = True
+            .SeriesColor.Color = 3289650
+            .SeriesColor.TintAndShade = 0
+            .Points.Negative.Color.Color = 208
+            .Points.Negative.Color.TintAndShade = 0
+            .Points.Markers.Color.Color = 208
+            .Points.Markers.Color.TintAndShade = 0
+            .Points.Highpoint.Color.Color = 208
+            .Points.Highpoint.Color.TintAndShade = 0
+            .Points.Lowpoint.Color.Color = 208
+            .Points.Lowpoint.Color.TintAndShade = 0
+            .Points.Firstpoint.Color.Color = 208
+            .Points.Firstpoint.Color.TintAndShade = 0
+            .Points.Lastpoint.Color.Color = 208
+            .Points.Lastpoint.Color.TintAndShade = 0
+        End With
     End With
 
+    'Add conditional formatting
     Range("P2:AL" & TotalRows).FormatConditions.Add Type:=xlCellValue, Operator:=xlLess, Formula1:="=0"
-    Range("P2:AL" & TotalRows).FormatConditions(Range("P2:AL" & TotalRows).FormatConditions.Count).SetFirstPriority
+    With Range("P2:AL" & TotalRows).FormatConditions(1)
+        .Font.Color = -16383844
+        .Font.TintAndShade = 0
+        .Interior.PatternColorIndex = xlAutomatic
+        .Interior.Color = 13551615
+        .Interior.TintAndShade = 0
+        .StopIfTrue = False
+    End With
 
-    With Range("P2:AL" & TotalRows).FormatConditions(1).Font
-        .Color = -16383844
-        .TintAndShade = 0
-    End With
-    With Range("P2:AL" & TotalRows).FormatConditions(1).Interior
-        .PatternColorIndex = xlAutomatic
-        .Color = 13551615
-        .TintAndShade = 0
-    End With
-    Range("P2:AL" & TotalRows).FormatConditions(1).StopIfTrue = False
+    'Add alternating line colors
+    ActiveSheet.ListObjects.Add(xlSrcRange, Range("A1:AM" & TotalRows), , xlYes).Name = "Table1"
+    Sheet1.ListObjects(1).Unlist
 
-    Range("O1").Select
-    With Range("A:A")
-        ActiveSheet.ListObjects.Add( _
-                xlSrcRange, Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, .CurrentRegion.Columns.Count)), , _
-                xlYes).Name = "Table1"
-    End With
-    Range(Cells(2, 4), Cells(ActiveSheet.UsedRange.Rows.Count, ActiveSheet.UsedRange.Columns.Count)).HorizontalAlignment = xlCenter
-    Range(Cells(2, 2), Cells(ActiveSheet.UsedRange.Rows.Count, 2)).HorizontalAlignment = xlCenter
+    'Fix column alignment
+    Range(Cells(2, 4), Cells(TotalRows, TotalCols)).HorizontalAlignment = xlCenter
+    Range("B2:B" & TotalRows).HorizontalAlignment = xlCenter
+
+    'Fix column width
     ActiveSheet.UsedRange.Columns.AutoFit
-
     Columns("O:O").ColumnWidth = 22.29
-    Application.ScreenUpdating = True
 End Sub
 
 '---------------------------------------------------------------------------------------
