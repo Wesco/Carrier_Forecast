@@ -3,7 +3,6 @@ Option Explicit
 
 Sub CreateOrderReport()
     Dim TotalRows As Long
-    Dim TotalCols As Integer
     Dim DestCol As Integer
     Dim CombinedCols As Long
     Dim i As Long
@@ -108,7 +107,7 @@ Sub CreateOrderReport()
     Sheet1.ListObjects(1).Unlist
 
     'Fix column alignment
-    Range(Cells(2, 4), Cells(TotalRows, TotalCols)).HorizontalAlignment = xlCenter
+    Range("D2:AM" & TotalRows).HorizontalAlignment = xlCenter
     Range("B2:B" & TotalRows).HorizontalAlignment = xlCenter
 
     'Fix column width
