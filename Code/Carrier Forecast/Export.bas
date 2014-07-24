@@ -24,7 +24,7 @@ Sub ExportForecast()
     Dim sPath As String
     sPath = "\\br3615gaps\gaps\Carrier\" & Format(Date, "yyyy") & " Alerts\"
 
-    If FileExists(sPath) = False Then RecMkDir sPath
+    If Not FileExists(sPath) Then RecMkDir sPath
     Worksheets("Forecast").Copy
     Sheets.Add After:=Sheets(Sheets.Count), Count:=2
 
