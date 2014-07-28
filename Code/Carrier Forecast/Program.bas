@@ -14,21 +14,21 @@ Sub Main()
     ImportGaps SimsAsText:=False
     ImportForecast "Demand (*.xlsx), *.xlsx", "Demand", Sheets("Demand").Range("A1")
     ImportForecast "Weekly (*.xlsx), *.xlsx", "Weekly", Sheets("Weekly").Range("A1")
+    On Error GoTo 0
 
     ExportSlink Sheets("Demand")
     ExportSlink Sheets("Weekly")
 
     FormatFcst Fcst.Demand
     FormatFcst Fcst.Weekly
-    
+
     CombineForecasts
     MergeParts
     ExportSlink Sheets("Combined")
-    
+
     CreateOrderReport
     AddNotes
     ExportForecast
-    On Error GoTo 0
 
     Application.ScreenUpdating = True
     ThisWorkbook.Saved = True

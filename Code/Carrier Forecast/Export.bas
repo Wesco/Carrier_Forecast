@@ -22,27 +22,19 @@ End Sub
 
 Sub ExportForecast()
     Dim sPath As String
+    Dim TotalRows As Long
+
     sPath = "\\br3615gaps\gaps\Carrier\" & Format(Date, "yyyy") & " Alerts\"
 
     If Not FileExists(sPath) Then RecMkDir sPath
-    Worksheets("Forecast").Copy
+    Sheets("Forecast").Copy
     Sheets.Add After:=Sheets(Sheets.Count), Count:=2
+    Sheets("Sheet2").Name = "Order"
+    Sheets("Sheet3").Name = "Expedite"
 
-    With ActiveWorkbook.Worksheets("Forecast").ListObjects("Table1").Sort.SortFields
-        .Clear
-        .Add Key:=Range("Table1[LT/Days]"), SortOn:=xlSortOnValues, Order:=xlDescending, DataOption:=xlSortNormal
-    End With
-    With ActiveWorkbook.Worksheets("Forecast").ListObjects("Table1").Sort
-        .Header = xlYes
-        .MatchCase = False
-        .Orientation = xlTopToBottom
-        .SortMethod = xlPinYin
-        .Apply
-    End With
-
-    Worksheets("Sheet2").Name = "Order"
-    Worksheets("Sheet3").Name = "Expedite"
-    Worksheets(1).Select
+    Sheets("Forecast").Select
+    TotalRows = Columns(4).Rows(Rows.Count).End(xlUp).Row
+    ActiveSheet.UsedRange.Sort Key1:=Range("M1:M" & TotalRows), Order1:=xlDescending, Header:=xlYes
 
     On Error Resume Next
     ActiveWorkbook.SaveAs sPath & "Slink Alert " & Format(Date, "M-dd-yy") & ".xlsx", xlOpenXMLWorkbook
