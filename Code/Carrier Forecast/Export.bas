@@ -7,7 +7,7 @@ Sub ExportSlink(SourceSheet As Worksheet)
     Dim Name As String
 
     PrevDispAlert = Application.DisplayAlerts
-    Path = "\\br3615gaps\gaps\Carrier\" & Format(Date, "yyyy") & "Slink\"
+    Path = "\\br3615gaps\gaps\Carrier\" & Format(Date, "yyyy") & " Slink\"
     Name = SourceSheet.Name & " " & Format(Date, "yyyy-mm-dd")
 
     SourceSheet.Copy
