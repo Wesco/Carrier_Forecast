@@ -50,7 +50,7 @@ Sub CreateOrderReport()
     'Add forecast month data
     Range("P1:AL1").Formula = "=Combined!B1"
     Range("P1:AL1").Value = Range("P1:AL1").Value
-    Range("P1:AL1").NumberFormat = "mm/dd"
+    Range("P1:AL1").NumberFormat = "mm/dd/yyyy"
     Range("P2:P" & TotalRows).Formula = "=D2-VLOOKUP(A2,Combined!A:B,2,FALSE)"
     Range("P2:P" & TotalRows).Value = Range("P2:P" & TotalRows).Value
 

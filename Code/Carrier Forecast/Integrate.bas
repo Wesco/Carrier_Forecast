@@ -39,7 +39,7 @@ Sub CombineForecasts()
     'Insert columns for weekly data
     Range(Cells(1, 2), Cells(1, WeeklyCols)).EntireColumn.Insert
     Range(Cells(1, 2), Cells(1, WeeklyCols)).Value = ColHeaders
-    Range(Cells(1, 2), Cells(1, WeeklyCols)).NumberFormat = "d-mmm"
+    Range(Cells(1, 2), Cells(1, WeeklyCols)).NumberFormat = "mm/dd/yyyy"
     
     'Copy weekly data below demand data
     Sheets("Weekly").Select
@@ -81,5 +81,5 @@ Sub MergeParts()
     For i = 1 To ActiveSheet.Columns.Count - 1
         Cells(1, i).Value = Replace(Cells(1, i).Text, "Sum of ", "")
     Next
-    Range(Cells(1, 2), Cells(1, ActiveSheet.Columns.Count)).NumberFormat = "mm/dd"
+    Range(Cells(1, 2), Cells(1, ActiveSheet.Columns.Count)).NumberFormat = "mm/dd/yyyy"
 End Sub
