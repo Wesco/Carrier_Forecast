@@ -33,8 +33,7 @@ Sub Main()
     Application.ScreenUpdating = True
     ThisWorkbook.Saved = True
     MsgBox ("Complete!")
-    Email SendTo:="JBarnhill@wesco.com", _
-          CC:="ACoffey@wesco.com", _
+    Email SendTo:="ACoffey@wesco.com", _
           Subject:="Carrier Forecast", _
           Body:="""\\br3615gaps\gaps\Carrier\" & Format(Date, "yyyy") & " Alerts\Slink Alert " & Format(Date, "M-dd-yy") & ".xlsx"""
     Exit Sub
